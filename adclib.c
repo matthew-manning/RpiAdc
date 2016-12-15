@@ -1,14 +1,16 @@
 #include "adclib.h"
 #include <stdlib.h>
 #include "i2c.h"
+#include <stdio.h>//only needed for debug
 
-void initADC(struct AdcBoard * Board, int BusAddr)
+void initAdc(struct AdcBoard * Board, int BusAddr)
 //takes a adc board pointer
 {
 	uint16_t ConWord;
+	uint16_t ReadBack;
 
 //	struct AdcBoard NewBoard;
-	Board->PortSel = 1;
+	Board->PortSel = 0;
 	Board->BusAddr = BusAddr;
 	Board->SampRate = 16;
 	Board->I2cHandle = i2c_init(1, BusAddr, 0);
@@ -17,6 +19,9 @@ void initADC(struct AdcBoard * Board, int BusAddr)
 	ConWord = 0x8020;//16 bits of config data
 	
 	i2c_write_to_16reg(Board->I2cHandle, 1, &ConWord, 1);
+	
+	i2c_read_from_16reg(Board->I2cHandle, 1, &ReadBack, 1);
+	printf("read back is %x\n", ReadBack);
 	
 }
 
@@ -45,6 +50,9 @@ float readAdc(struct AdcBoard * Board)
 {
 	float ReadVolts;
 	i2c_read_from_16reg(Board->I2cHandle, 0, &ReadVolts, 1);
+
+	printf("raw value from adc is %0.4f\n", ReadVolts);
+	printf("pin being read %d\n", Board->PortSel);
 	ReadVolts *= (Board->StepVolt / 1000000);
 	
 	return ReadVolts;
