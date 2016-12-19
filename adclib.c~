@@ -39,23 +39,14 @@ void selAdcPort(struct AdcBoard * Board, uint8_t PortNum)
 	
 	switch (PortNum)
 	{
-	
-		//actual pins being read do not agree with the data sheet
-		/*
-		 *real pin	data sheet pin	value
-		 *0		1		5
-		 *1		2		6
-		 *2		3		7
-		 *3		0		4
-		*/
 		default:
-		case 0: PortMap = 5;
+		case 0: PortMap = 4;
 			break;
-		case 1: PortMap = 6;
+		case 1: PortMap = 5;
 			break;
-		case 2: PortMap = 7;
+		case 2: PortMap = 6;
 			break;
-		case 3: PortMap = 4;
+		case 3: PortMap = 7;
 	}	
 	i2c_read_from_reg(Board->I2cHandle, 1, (char *)CurMap, 2);
 	WriteMap[1] = CurMap[1];
